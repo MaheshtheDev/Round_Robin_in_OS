@@ -95,7 +95,7 @@ int main()
     	else
     	{
     		int diff = (input[i].A_time - tet);
-    		tet = tet + diff + B_time;
+    		tet = tet + diff + B;
 
     	}
     }
