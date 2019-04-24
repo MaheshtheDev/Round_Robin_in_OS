@@ -6,14 +6,14 @@ struct Process_Data
 };
 
 struct Process_Data current;
-typedef struct Process_Data P_d ;
+typedef struct Process_Data sd ;
 
-bool idsort(const P_d& x , const P_d& y)
+bool idsort(const sd& x , const sd& y)
 {
 	return x.Pid < y.Pid;
 }
 
-bool arrivalsort( const P_d& x ,const P_d& y)
+bool arrivalsort( const sd& x ,const sd& y)
 {
 	if(x.A_time < y.A_time)
 		return true;
@@ -30,14 +30,14 @@ bool arrivalsort( const P_d& x ,const P_d& y)
 }
 
 
-bool Numsort( const P_d& x ,const P_d& y)
+bool Numsort(sd& x ,sd& y)
 {
 	return x.Num < y.Num;
 }
-/*Sorting on the base of Priority if that same then on the base of PID*/
+
 struct comPare
 {
-	bool operator()(const P_d& x ,const P_d& y)
+	bool operator()(const sd& x ,const sd& y)
 	{
 		if( x.Priority > y.Priority )
 			return true;
@@ -51,8 +51,7 @@ struct comPare
 
 };
 
-/**To check the Input **/
-void my_check(vector<P_d> mv)
+void my_check(vector<sd> mv)
 {
 	for(unsigned int i= 0; i < mv.size() ;i++)
 	{
@@ -64,10 +63,9 @@ void my_check(vector<P_d> mv)
 int main()
 {
 	int i;
-	vector<P_d> input,input_copy;
-	P_d temp;
-	int pq_process = 0; // for PQ process
-	int rq_process = 0; // for RQ process
+	vector<sd> ip,ipc;
+	sd temp;
+	int pq_process=0,rq_process = 0;
 	int A,B,Pid,Priority,n,clock,tet = 0;
 	cin>>n;
 	for( i= 0; i< n; i++ )
@@ -79,22 +77,20 @@ int main()
 		temp.R_time = B;
 		temp.Pid = Pid;
 		temp.Priority = Priority;
-		input.push_back(temp);
+		ip.push_back(temp);
 	}
-	input_copy = input;
-	sort( input.begin(), input.end(), arrivalsort );
-    //cout<<"arrivalsort : "<<endl;
-    //my_check( input ); // To check the sort unomment it
-    tet = tet + input[0].A_time;
+	ipc = ip;
+	sort( ip.begin(), ip.end(), arrivalsort );
+    tet = tet + ip[0].A_time;
     for( i= 0;i< n;i++ )
     {
-    	if( tet >= input[i].A_time )
+    	if( tet >= ip[i].A_time )
     	{
-    		tet = tet +input[i].B_time;
+    		tet = tet +ip[i].B_time;
     	}
     	else
     	{
-    		int diff = (input[i].A_time - tet);
+    		int diff = (ip[i].A_time - tet);
     		tet = tet + diff + B;
 
     	}
@@ -105,9 +101,9 @@ int main()
 		Ghant[i]=-1;
 	}
 
-	priority_queue < P_d ,vector<Process_Data> ,comPare> pq; //Priority Queue PQ
+	priority_queue < sd ,vector<Process_Data> ,comPare> pq;
 
-	queue< P_d > rq; //Round Robin Queue RQ
+	queue< sd > rq; //Round Robin Queue RQ
 	int cpu_state = 0; //idle if 0 then Idle if 1 the Busy
 	int quantum = 4 ; //Time Quantum
 	current.Pid = -2;
@@ -118,14 +114,14 @@ int main()
 		/**Insert the process with same Arrival time in Priority Queue**/
 		for( int j = 0; j< n ; j++ )
 		{
-			if(clock == input[j].A_time)
+			if(clock == ip[j].A_time)
 			{
-				pq.push(input[j]);
+				pq.push(ip[j]);
 			}
 		}
 
 
-		if(cpu_state == 0) //If CPU idle
+		if(cpu_state == 0)
 		{
 			if(!pq.empty())
 			{
@@ -144,13 +140,13 @@ int main()
 				quantum = 4;
 			}
 		}
-		else if(cpu_state == 1) //If cpu has any procss
+		else if(cpu_state == 1)
 		{
 			if(pq_process == 1 && (!pq.empty()))
 			{
-				if(pq.top().Priority < current.Priority ) //If new process has high priority
+				if(pq.top().Priority < current.Priority )
 				{
-					rq.push(current); //push current in RQ
+					rq.push(current);
 					current = pq.top();
 					pq.pop();
 					quantum = 4;
@@ -200,7 +196,7 @@ int main()
 	}
 
 
-	sort( input.begin(), input.end(), idsort );
+	sort( ip.begin(), ip.end(), idsort );
 
 	for(int i=0;i<n;i++)
 	{
@@ -208,7 +204,7 @@ int main()
 		{
 			if(Ghant[k]==i+1)
 			{
-				input[i].F_time=k+1;
+				ip[i].F_time=k+1;
 				break;
 
 			}
@@ -221,24 +217,24 @@ int main()
 
 			if(Ghant[k]==i+1)
 			{
-				input[i].S_time=k;
+				ip[i].S_time=k;
 				break;
 			}
 		}
 	}
 
-	sort( input.begin(), input.end(), Numsort );
+	sort( ip.begin(), ip.end(), Numsort );
 
 	for(int i=0;i<n;i++)
 	{
-		input[i].Res_time=input[i].S_time-input[i].A_time;
-		input[i].W_time=(input[i].F_time-input[i].A_time)-input[i].B_time;
+		ip[i].Res_time=ip[i].S_time-ip[i].A_time;
+		ip[i].W_time=(ip[i].F_time-ip[i].A_time)-ip[i].B_time;
 
 	}
 
 	for(int i=0;i<n;i++)
 	{
-		cout<<input[i].Pid<<" "<<input[i].Res_time<<" "<<input[i].F_time<<" "<<input[i].W_time<<endl;
+		cout<<ip[i].Pid<<" "<<ip[i].Res_time<<" "<<ip[i].F_time<<" "<<ip[i].W_time<<endl;
 
 	}
 	return 0;
