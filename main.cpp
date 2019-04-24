@@ -8,12 +8,12 @@ struct Process_Data
 struct Process_Data current;
 typedef struct Process_Data sd ;
 
-bool idsort(const sd& x , const sd& y)
+bool idsort(sd& x ,sd& y)
 {
 	return x.Pid < y.Pid;
 }
 
-bool arrivalsort( const sd& x ,const sd& y)
+bool arrivalsort(sd& x ,sd& y)
 {
 	if(x.A_time < y.A_time)
 		return true;
@@ -37,7 +37,7 @@ bool Numsort(sd& x ,sd& y)
 
 struct comPare
 {
-	bool operator()(const sd& x ,const sd& y)
+	bool operator()(sd& x ,sd& y)
 	{
 		if( x.Priority > y.Priority )
 			return true;
@@ -79,7 +79,7 @@ int main()
 		temp.Priority = Priority;
 		ip.push_back(temp);
 	}
-	ipc = ip;
+	//ipc = ip;
 	sort( ip.begin(), ip.end(), arrivalsort );
     tet = tet + ip[0].A_time;
     for( i= 0;i< n;i++ )
@@ -100,12 +100,10 @@ int main()
 	{
 		Ghant[i]=-1;
 	}
-
 	priority_queue < sd ,vector<Process_Data> ,comPare> pq;
-
-	queue< sd > rq; //Round Robin Queue RQ
-	int cpu_state = 0; //idle if 0 then Idle if 1 the Busy
-	int quantum = 4 ; //Time Quantum
+	queue< sd > rq;
+	int cpu_state = 0;
+	int quantum = 4 ;
 	current.Pid = -2;
 	current.Priority = 100000;
 
@@ -152,7 +150,7 @@ int main()
 					quantum = 4;
 				}
 			}
-			else if(rq_process == 1 && (!pq.empty())) //If process is from RQ and new process come  in PQ
+			else if(rq_process == 1 && (!pq.empty()))
 			{
 				rq.push(current);
 				current = pq.top();
@@ -166,12 +164,12 @@ int main()
 		}
 
 
-		if(current.Pid != -2) // Process Execution
+		if(current.Pid != -2)
 		{
 			current.R_time--;
 			quantum--;
 			Ghant[clock] = current.Pid;
-			if(current.R_time == 0) //If process Finish
+			if(current.R_time == 0)
 			{
 				cpu_state = 0 ;
 				quantum = 4 ;
@@ -180,7 +178,7 @@ int main()
 				rq_process = 0;
 				pq_process = 0;
 			}
-			else if(quantum == 0 ) //If time Qunatum of a current running process Finish
+			else if(quantum == 0 )
 			{
 				rq.push(current);
 				current.Pid = -2;
