@@ -41,15 +41,7 @@ struct comPare
 		return false;
 
 	}
-
 };
-void my_check(vector<sd> mv)
-{
-	for(int i= 0; i < mv.size() ;i++)
-	{
-		cout<<"Pid :"<<mv[i].Pid<<" _time : "<<mv[i].A_time<<" B_time : "<<mv[i].B_time<<" Priority : "<<mv[i].Priority<<endl;
-	}
-}
 int main()
 {
 	vector<sd> ip;
