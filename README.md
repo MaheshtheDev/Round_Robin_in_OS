@@ -21,7 +21,7 @@ Before rushing to the Answer you need to be aware of Concepts Like :
 
 2.[Round Robin Scheduling](https://en.wikipedia.org/wiki/Round-robin_scheduling})
 
-## Input Format
+### Input Format
 
 First of all, It Require Value `N` (No.of Processes Required)
 
@@ -34,7 +34,7 @@ if `N = 2` taken
 |  1     |34|2|3|
 |2|34|5|5|
 
-## Output Format
+### Output Format
 
 |Process Id| Response Time |Completion Time| Waiting Time |
 |:-------:|:------:|:------:|:------:|
